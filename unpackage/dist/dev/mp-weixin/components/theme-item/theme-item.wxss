@@ -61,3 +61,11 @@
   padding: 5rpx 16rpx;
   border-radius: 0 0 20rpx 0;
 }
+.themeItem .box.more .mask.data-v-f4eafbca {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+.themeItem .box.more .text.data-v-f4eafbca {
+  font-size: 28rpx;
+}

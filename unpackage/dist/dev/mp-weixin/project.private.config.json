@@ -3,5 +3,18 @@
     "projectname": "WallPaper",
     "setting": {
         "compileHotReLoad": true
+    },
+    "condition": {
+        "miniprogram": {
+            "list": [
+                {
+                    "name": "pages/classify/classify",
+                    "pathName": "pages/classify/classify",
+                    "query": "",
+                    "launchMode": "default",
+                    "scene": null
+                }
+            ]
+        }
     }
 }

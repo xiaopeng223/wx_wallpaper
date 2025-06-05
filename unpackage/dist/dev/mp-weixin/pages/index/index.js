@@ -48,6 +48,9 @@ function _sfc_render(_ctx, _cache) {
       return {
         a: "1cf27b2a-6-" + i0
       };
+    }),
+    k: common_vendor.p({
+      isMore: true
     })
   };
 }
