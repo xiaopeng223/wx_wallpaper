@@ -35,7 +35,7 @@
 			"text":"推荐",
 			"pagePath":"pages/index/index",
 			"iconPath": "/static/images/tabBar/home.png",
-			"selectedIconPath": "/static/images/tabBar/home-h.png",
+			"selectedIconPath": "/static/images/tabBar/home-h.png"
 			},
 			{
 			"text":"分类",
@@ -48,8 +48,8 @@
 			"pagePath":"pages/user/user",
 			"iconPath": "/static/images/tabBar/user.png",
 			"selectedIconPath": "/static/images/tabBar/user-h.png"
-			},
-		],
+			}
+		]
 	},
 	"uniIdRouter": {}
 }

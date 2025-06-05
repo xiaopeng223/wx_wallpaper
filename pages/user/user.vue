@@ -48,6 +48,12 @@
 						联系客服
 					</view>
 				</view>
+				<!-- #ifdef H5 || APP -->
+				<button @click="phoneContact">拨打电话</button>
+				<!-- #endif -->
+				<!-- #ifdef MP -->
+				<button open-type="contact">联系客服</button>
+				<!-- #endif -->
 				<view class="right">
 					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 				</view>
@@ -85,7 +91,11 @@
 </template>
 
 <script setup>
-	
+	const phoneContact=()=>{
+		uni.makePhoneCall({
+			phoneNumber: '114' 
+		});
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -130,6 +140,15 @@
 					padding:0 30rpx ;
 					height: 100rpx;
 					border-bottom: 1px solid #eee;
+				    position: relative;
+					button{
+						position: absolute;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+						opacity: 0;
+					}
 					&:last-child{
 						border-bottom: none;
 					}
