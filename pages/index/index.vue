@@ -68,6 +68,7 @@
 		</view>
 		<view class="content1">
 			<theme-item v-for="item in 8"></theme-item>
+			<theme-item :isMore="true"></theme-item>
 		</view>
 	</view>
 </template>
@@ -166,15 +167,15 @@
 				}
 		}
 		.theme{
-			padding-top: 50rpx;
+			padding-top:30rpx;
 			.more{
 				font-size: 32rpx;
 				color: #888;
 			}
 		}
 		.content1{
-			margin-top: 30rpx;
-			padding: 0 30rpx;
+			// margin-top: 10rpx;
+			padding: 30rpx 30rpx;
 			display: grid;
 			gap:15rpx;
 			grid-template-columns: repeat(3,1fr);
