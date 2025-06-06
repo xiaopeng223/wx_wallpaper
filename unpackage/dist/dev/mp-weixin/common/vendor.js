@@ -5209,6 +5209,10 @@ function vFor(source, renderItem) {
   }
   return ret;
 }
+function setRef(ref2, id, opts = {}) {
+  const { $templateRefs } = getCurrentInstance();
+  $templateRefs.push({ i: id, r: ref2, k: opts.k, f: opts.f });
+}
 const o = (value, key) => vOn(value, key);
 const f = (source, renderItem) => vFor(source, renderItem);
 const s = (value) => stringifyStyle(value);
@@ -5216,6 +5220,7 @@ const e = (target, ...sources) => extend(target, ...sources);
 const n = (value) => normalizeClass(value);
 const t = (val) => toDisplayString(val);
 const p = (props) => renderProps(props);
+const sr = (ref2, id, opts) => setRef(ref2, id, opts);
 function createApp$1(rootComponent, rootProps = null) {
   rootComponent && (rootComponent.mpType = "app");
   return createVueApp(rootComponent, rootProps).use(plugin);
@@ -7037,7 +7042,7 @@ function isConsoleWritable() {
 function initRuntimeSocketService() {
   const hosts = "192.168.0.196,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_gLlGsw";
+  const id = "mp-weixin_5SpvYN";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -7994,5 +7999,7 @@ exports.p = p;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;
 exports.s = s;
+exports.sr = sr;
 exports.t = t;
+exports.unref = unref;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

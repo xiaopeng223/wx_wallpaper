@@ -1,5 +1,6 @@
 <template>
-	<view class="homeLayout page">
+	<view class="homeLayout pageBg">
+		<custom-nav-bar title="推荐"></custom-nav-bar>
 		<view class="banner">
 			<swiper indicator-dots 
 			indicator-color="rgba(255,255,255,0.5)" 
@@ -17,10 +18,10 @@
 				</swiper-item>
 			</swiper>
 		</view>
-		<view class="notice">
+		<view class="notice" @click="goDetail">
 			<view class="left">
 				<uni-icons type="sound-filled" size="20" color="$brand-theme-color" ></uni-icons>
-				<text class="text">公告</text>
+				<text class="text" >公告</text>
 			</view>
 			<view class="center">
 				<swiper  
@@ -53,7 +54,7 @@
 			<view class="content">
 				<scroll-view scroll-x>
 					<view class="box" v-for="item in 8">
-						<image src="/common/images/preview_small.webp" mode="aspectFill"></image>
+						<image src="/common/images/preview_small.webp" mode="aspectFill" @click="goPreview"></image>
 					</view>
 				</scroll-view>
 			</view>
@@ -74,6 +75,16 @@
 </template>
 
 <script setup>
+	const goPreview=()=>{
+		uni.navigateTo({
+			url:"/pages/preview/preview"
+		})
+	}
+	const goDetail=()=>{
+		uni.navigateTo({
+			url:"/pages/notice/detail"
+		})
+	}
 </script>
  
 <style lang="scss" scoped>
