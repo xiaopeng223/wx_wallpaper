@@ -3,23 +3,42 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"navigationBarTitleText": "首页",
+				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path" : "pages/classify/classify",
 			"style" : 
 			{
-				"navigationBarTitleText" : "分类"
+				"navigationBarTitleText" : "分类",
+				"navigationStyle": "custom"
 			}
 		},
 		{
 			"path" : "pages/user/user",
 			"style" : 
 			{
-				"navigationBarTitleText" : "我的"
+				"navigationBarTitleText" : "我的",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path" : "pages/classlist/classlist",
+			"style" : 
+			{
+				"navigationBarTitleText" : "分类列表"
+			}
+		},
+		{
+			"path" : "pages/preview/preview",
+			"style" : 
+			{
+				"navigationBarTitleText" : "预览",
+				"navigationStyle": "custom"
 			}
 		}
+	
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

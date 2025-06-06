@@ -1,5 +1,5 @@
 <template>
-	<view class="homeLayout">
+	<view class="homeLayout page">
 		<view class="banner">
 			<swiper indicator-dots 
 			indicator-color="rgba(255,255,255,0.5)" 
@@ -19,7 +19,7 @@
 		</view>
 		<view class="notice">
 			<view class="left">
-				<uni-icons type="sound-filled" size="20" color="#28b389" ></uni-icons>
+				<uni-icons type="sound-filled" size="20" color="$brand-theme-color" ></uni-icons>
 				<text class="text">公告</text>
 			</view>
 			<view class="center">
@@ -75,7 +75,7 @@
 
 <script setup>
 </script>
-
+ 
 <style lang="scss" scoped>
 	.homeLayout{
 		.banner{
@@ -110,7 +110,7 @@
 				align-items: center;
 				justify-content: center;
 				.text{
-					color: #28b389;
+					color: $brand-theme-color;
 					font-weight: 600;
 					font-size: 28rpx;
 				}
@@ -136,7 +136,7 @@
 		.select{
 			padding-top: 50rpx;	
 			.date{
-				color: #28b389;
+				color: $brand-theme-color;
 				display: flex;
 				align-items: center;
 				.text{

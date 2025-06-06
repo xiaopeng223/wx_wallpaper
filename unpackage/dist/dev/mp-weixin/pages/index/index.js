@@ -24,7 +24,7 @@ function _sfc_render(_ctx, _cache) {
     d: common_vendor.p({
       type: "sound-filled",
       size: "20",
-      color: "#28b389"
+      color: "$brand-theme-color"
     }),
     e: common_vendor.p({
       type: "right",

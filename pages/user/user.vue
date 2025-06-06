@@ -1,5 +1,5 @@
 <template>
-	<view class="userLayout">
+	<view class="userLayout pageBg">
 	<view class="userInfo">
 		<view class="avatar">
 			<image src="/static/images/xxmLogo.png" mode="aspectFill"></image>
@@ -13,7 +13,7 @@
 	</view>
 	<view class="section">
 		<view class="list">
-			<view class="row" >
+			<navigator url="/pages/classify/classify" open-type="reLaunch" class="row" >
 				<view class="left">
 					<uni-icons type="download-filled" size="20" color="#28b389"></uni-icons>
 					<view class="text">
@@ -26,8 +26,8 @@
 					</view>
 					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 				</view>
-			</view>
-			<view class="row" >
+			</navigator>
+			<navigator url="/pages/classify/classify" open-type="reLaunch" class="row" >
 				<view class="left">
 					<uni-icons type="star-filled" size="20" color="#28b389"></uni-icons>
 					<view class="text">
@@ -40,7 +40,7 @@
 					</view>
 					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 				</view>
-			</view>
+			</navigator>
 			<view class="row" >
 				<view class="left">
 					<uni-icons type="chatboxes-filled" size="20" color="#28b389"></uni-icons>
@@ -141,6 +141,7 @@
 					height: 100rpx;
 					border-bottom: 1px solid #eee;
 				    position: relative;
+					background: #fff;
 					button{
 						position: absolute;
 						top: 0;
