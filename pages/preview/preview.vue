@@ -1,8 +1,8 @@
 <template>
 	<view class="preview">
-		<swiper circular>
-			<swiper-item v-for="item in 5">
-				<image src="/common/images/preview1.jpg" mode="aspectFill" @click="maskChange"></image>
+		<swiper circular :current="currentIndex" @change="swiperChange">
+			<swiper-item v-for="(item,index) in classList" :key="item._id">
+				<image v-if="readImgs.includes(index)" :src="item.picurl" mode="aspectFill" @click="maskChange"></image>
 			</swiper-item>
 		</swiper>
 		<view class="mask" v-if="maskState">
@@ -10,7 +10,7 @@
 				<uni-icons type="back" color="#fff" size="20" ></uni-icons>
 			</view>
 			<view class="count">
-				3 / 5
+				{{currentIndex+1}} / {{classList.length}}
 			</view>
 			<view class="time">
 				<uni-dateformat :date="new Date()" format="hh:mm"></uni-dateformat>
@@ -28,10 +28,10 @@
 				<view class="box" @click="openScore">
 					<uni-icons type="star" size="23"></uni-icons>
 					<view class="text">
-						5分
+						{{currentInfo.score}}分
 					</view>
 				</view>
-				<view class="box">
+				<view class="box" @click="clickDownload">
 					<uni-icons type="download" size="23"></uni-icons>
 					<view class="text">
 						下载
@@ -55,42 +55,40 @@
 					<view class="content">
 						<view class="row">
 							<view class="label">壁纸ID：</view>
-							<text selectable class="value">1232321</text>
+							<text selectable class="value">{{currentInfo._id}}</text>
 						</view>
 						<view class="row">
 							<view class="label">分类：</view>
-							<text selectable class="value class">明星美女</text>
+							<text selectable class="value class">{{currentInfo._id}}</text>
 						</view>
 						<view class="row">
 							<view class="label">发布者：</view>
-							<text selectable class="value">尼古拉斯赵四</text>
+							<text selectable class="value">{{currentInfo.nickname}}</text>
 						</view>
 						<view class="row">
 							<view class="label">评分：</view>
 							<view class="value rotebox">
-								<uni-rate readonly touchable value="3.5" size="16"/>
-								<text class="score">5分</text>
+								<uni-rate readonly touchable :value="currentInfo.score" size="16"/>
+								<text class="score">{{currentInfo.score}}分</text>
 							</view>
 						</view>
 						
 						<view class="row">
 							<view class="label">摘要：</view>
-							<text selectable class="value">摘要文字内容填充部分，
-							摘要文字内容填充部分，摘要文字内容填充部分，
-							摘要文字内容填充部分，摘要文字内容填充部分。</text>
+							<text selectable class="value">{{currentInfo.description}}</text>
 						</view>
 						<view class="row">
 							<view class="label">标签：</view>
 							<view class="value tabs">
-								<view class="tab" v-for="item in 3">
-									标签名
+								<view class="tab" v-for="item in currentInfo.tabs">
+									{{item}}
 								</view>
 							</view>
 						</view>
 						
 						<view class="coperight">
-							本代码及设计内容仅供学习参考，
-							未经许可不得用于商业用途。原创内容版权归作者所有，转载请注明出处。
+							本代码及设计内容仅供学习，
+							未经许可不得用于商业用途。原创内容版权归原作者所有，转载请注明出处。
 							使用第三方资源（如图片、组件）请遵守其相关授权协议。
 						</view>
 					</view>
@@ -103,18 +101,18 @@
 				<view class="popHeader" >
 				<view></view>
 				<view class="title">
-				壁纸信息
+				{{isScore?'评过分了': '壁纸信息'}}
 				</view>
 				<view class="close">
 		<uni-icons type="closeempty" size="18" color="#999" @click="scoreClose"></uni-icons>
 				</view>
 				</view>
 			<view class="content">
-				<uni-rate v-model="useScore" allowHalf/>
-				<text>{{useScore}}分</text>
+				<uni-rate v-model="userScore" allowHalf :disabled="userScore" disabled-color="#ffca3e"/>
+				<text>{{userScore}}分</text>
 			</view>
 			<view class="footer">
-				<button @click="submitScore" :disabled="!useScore" type="default" size="mini" plain>确认评分</button>
+				<button @click="submitScore" :disabled="!userScore || isScore" type="default"  size="mini" plain>确认评分</button>
 			</view>
 		</view>
 		</uni-popup>
@@ -123,8 +121,107 @@
 
 <script setup>
 import { ref } from 'vue';
+import {onLoad} from '@dcloudio/uni-app'
 import {getstatusBarHeight} from "@/utils/system.js"
-const useScore =ref(0)
+import {apiGetSetupScore,apiWriteDownload} from "@/apis/apis.js"
+//定义图片信息
+const currentInfo = ref(null);
+//下载图片到本地
+//点击下载
+const clickDownload = async () => {
+	try {
+		uni.showLoading({
+			title: "下载中...",
+			mask: true
+		})
+		let {classid,_id:wallId} = currentInfo.value;
+	let res =await apiWriteDownload({
+			classid,
+			wallId
+		})
+		if(res.data.errCode !=0) throw res;
+		// #ifdef MP || APP				
+		uni.getImageInfo({
+			src: currentInfo.value.picurl,  // 改成 currentInfo
+			success: function(res) {					
+				var path = res.path;
+				uni.saveImageToPhotosAlbum({
+					filePath: path,
+					success(res) {
+						uni.hideLoading();
+						uni.showToast({
+							title: '保存成功,可去相册查看',
+							icon: "none",
+							duration:2000
+						})							
+					},
+					fail(err) {
+						uni.hideLoading();
+						if(err.errMsg == 'saveImageToPhotosAlbum:fail cancel'){
+							uni.showToast({
+								title: '保存失败，请重新点击下载',
+								icon: "none"
+							})
+							return;
+						}							
+						uni.showModal({
+							title: '提示',
+							content: '需要您授权保存相册',
+							showCancel: false,
+							success:res=>{
+								if(res.confirm){
+									uni.openSetting({
+										success(settingdata) {
+											if (settingdata.authSetting['scope.writePhotosAlbum']) {
+												uni.showToast({
+													title:'获取权限成功',
+													icon:"none"
+												})													
+											}else{
+												uni.showToast({
+													title:'获取权限失败',
+													icon:"none"
+												})													
+											}
+											
+										}
+									})
+								}
+							}
+						})
+					},
+					complete(err) {
+						
+					}
+				})
+			}
+		})
+		// #endif
+
+		// #ifdef H5
+		//调用预览图片的方法		
+		uni.previewImage({
+			urls: [currentInfo.value.picurl],
+			current: 0,
+			success: (res) => {
+				uni.showToast({
+					title: '请长按保存',
+					icon: "none",
+					duration: 2000
+				})
+			}
+		})
+		// #endif
+
+	} catch (err) {			
+		console.log(err);
+		uni.hideLoading();
+	}
+}
+
+
+
+const userScore =ref(0)
 //遮罩层显示
 	const maskState =ref(true);
 	const maskChange =()=>{
@@ -142,19 +239,76 @@ const close =()=>{
 //评分弹窗
 const scorePopup = ref("");
 const openScore = ()=>{
+	if(currentInfo.value.userScore){
+		isScore.value = true
+		userScore.value = currentInfo.value.userScore
+	}
 	scorePopup.value.open();
 }
 const scoreClose =()=>{
 	scorePopup.value.close();
+	userScore.value = 0;
+	isScore.value = false
 }
 //提交评分
-const submitScore =()=>{
-	console.log("评分成功");
+const isScore = ref(false)
+const submitScore =async ()=>{
+	uni.showLoading({
+		title:"加载中..."
+	})
+	let {classid,_id:wallId} = currentInfo.value;
+    let res =await apiGetSetupScore({
+		classid,
+		wallId,
+		userScore:userScore.value
+	})
+	uni.hideLoading();
+	if(res.data.errCode === 0){
+		uni.showToast({
+			title:"评分成功",
+			icon:"success",
+		})
+		//缓存中存用户评分
+		classList.value[currentIndex.value].userScore = userScore.value;
+		uni.setStorageSync("storgClassList",classList.value);
+		scoreClose()
+	}
 }
 
 //返回上一页
 const goback=()=>{
 	uni.navigateBack()
+}
+
+//读取缓存里内容
+const classList =ref([])
+const storgClassList = uni.getStorageSync("storgClassList") || [];
+classList.value = storgClassList.map(item=>{
+	return{
+		...item,
+		picurl:item.smallPicurl.replace("_small.webp",".jpg")
+	}
+})
+//渲染点击进去的图片
+const currentId = ref(null);
+const currentIndex = ref(0)
+//滑动再加载
+const readImgs = ref([])
+onLoad((e)=>{
+  currentId.value = e.id;
+  currentIndex.value = classList.value.findIndex(item=>item._id == currentId.value)
+  readImgs.value.push(
+  currentIndex.value-1<=0 ? classList.value.length-1 : currentIndex.value-1,
+  currentIndex.value,
+  currentIndex.value+1>=classList.value.length-1 ? 0:currentIndex.value+1)
+  currentInfo.value = classList.value[currentIndex.value]
+  console.log(currentInfo);
+})
+const swiperChange = (e) =>{
+	currentIndex.value = e.detail.current;
+	readImgs.value.push(currentIndex.value-1,currentIndex.value,currentIndex.value+1)
+	currentInfo.value = classList.value[currentIndex.value]
+	console.log(currentInfo);
 }
 </script>
 

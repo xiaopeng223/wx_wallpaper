@@ -13,7 +13,8 @@
 	</view>
 	<view class="section">
 		<view class="list">
-			<navigator url="/pages/classify/classify" open-type="reLaunch" class="row" >
+			
+			<view class="row" @click="openClassfiy">	
 				<view class="left">
 					<uni-icons type="download-filled" size="20" color="#28b389"></uni-icons>
 					<view class="text">
@@ -26,21 +27,23 @@
 					</view>
 					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 				</view>
-			</navigator>
-			<navigator url="/pages/classify/classify" open-type="reLaunch" class="row" >
-				<view class="left">
-					<uni-icons type="star-filled" size="20" color="#28b389"></uni-icons>
-					<view class="text">
-						我的评分
+			</view>	
+		
+				<view class="row" @click="openClassfiy">
+					<view class="left">
+						<uni-icons type="star-filled" size="20" color="#28b389"></uni-icons>
+						<view class="text">
+							我的评分
+						</view>
+					</view>
+					<view class="right">
+						<view class="text">
+							33
+						</view>
+						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 					</view>
 				</view>
-				<view class="right">
-					<view class="text">
-						33
-					</view>
-					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
-				</view>
-			</navigator>
+			
 			<view class="row" >
 				<view class="left">
 					<uni-icons type="chatboxes-filled" size="20" color="#28b389"></uni-icons>
@@ -86,7 +89,9 @@
 			</view>
 		</view>
 	</view>
-	
+	<view class="safe-area-inset-bottom">
+		
+	</view>
 	</view>
 </template>
 
@@ -95,6 +100,11 @@
 		uni.makePhoneCall({
 			phoneNumber: '114' 
 		});
+	}
+	const openClassfiy =() =>{
+		uni.switchTab({
+			url:"/pages/classify/classify"
+		})
 	}
 </script>
 
@@ -156,6 +166,7 @@
 					.left{
 						display: flex;
 						align-items: center;
+					
 						.text{
 							padding-left: 20rpx;
 							color: #666;

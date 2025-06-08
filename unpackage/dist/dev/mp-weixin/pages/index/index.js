@@ -1,6 +1,6 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_assets = require("../../common/assets.js");
+const apis_apis = require("../../apis/apis.js");
 if (!Array) {
   const _easycom_custom_nav_bar2 = common_vendor.resolveComponent("custom-nav-bar");
   const _easycom_uni_icons2 = common_vendor.resolveComponent("uni-icons");
@@ -30,45 +30,84 @@ const _sfc_main = {
         url: "/pages/notice/detail"
       });
     };
+    const bannerList = common_vendor.ref([]);
+    const dayRandom = common_vendor.ref([]);
+    const noticeList = common_vendor.ref([]);
+    const classfiyList = common_vendor.ref([]);
+    const getbanner = async () => {
+      let res = await apis_apis.apiGetBanner();
+      bannerList.value = res.data.data;
+    };
+    getbanner();
+    const getDayRandom = async () => {
+      const res = await apis_apis.apiDayRandom();
+      dayRandom.value = res.data.data;
+    };
+    getDayRandom();
+    const getNotice = async () => {
+      const res = await apis_apis.apiGetNotice({ select: true });
+      noticeList.value = res.data.data;
+    };
+    getNotice();
+    const getClassify = async () => {
+      const res = await apis_apis.apiGetClassify({ select: true });
+      classfiyList.value = res.data.data;
+    };
+    getClassify();
     return (_ctx, _cache) => {
       return {
         a: common_vendor.p({
           title: "推荐"
         }),
-        b: common_assets._imports_0,
-        c: common_assets._imports_1,
-        d: common_assets._imports_2,
-        e: common_vendor.p({
+        b: common_vendor.f(bannerList.value, (item, k0, i0) => {
+          return {
+            a: item.picurl,
+            b: item._id
+          };
+        }),
+        c: common_vendor.p({
           type: "sound-filled",
           size: "20",
           color: "$brand-theme-color"
         }),
-        f: common_vendor.p({
+        d: common_vendor.f(noticeList.value, (item, k0, i0) => {
+          return {
+            a: common_vendor.t(item.title),
+            b: item._id
+          };
+        }),
+        e: common_vendor.p({
           type: "right",
           size: "16",
           color: "#333"
         }),
-        g: common_vendor.o(goDetail),
-        h: common_vendor.p({
+        f: common_vendor.o(goDetail),
+        g: common_vendor.p({
           type: "calendar-filled",
           size: "18",
           color: "#28b389"
         }),
-        i: common_vendor.p({
+        h: common_vendor.p({
           date: Date.now(),
           format: "dd日"
         }),
-        j: common_vendor.f(8, (item, k0, i0) => {
-          return {};
-        }),
-        k: common_assets._imports_3,
-        l: common_vendor.o(goPreview),
-        m: common_vendor.f(8, (item, k0, i0) => {
+        i: common_vendor.f(dayRandom.value, (item, k0, i0) => {
           return {
-            a: "1cf27b2a-7-" + i0
+            a: item.smallPicurl,
+            b: common_vendor.o(goPreview, item._id),
+            c: item._id
           };
         }),
-        n: common_vendor.p({
+        j: common_vendor.f(classfiyList.value, (item, k0, i0) => {
+          return {
+            a: item._id,
+            b: "1cf27b2a-7-" + i0,
+            c: common_vendor.p({
+              item
+            })
+          };
+        }),
+        k: common_vendor.p({
           isMore: true
         })
       };

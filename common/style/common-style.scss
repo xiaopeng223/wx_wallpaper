@@ -8,4 +8,9 @@ view,swiper,swiper-item{
 	
 	min-height: calc(100vh - 180rpx);
 }
-
+.loadingLayout{
+	padding: 30rpx 0;
+}
+.safe-area-inset-bottom{
+	height: env(safe-area-inset-bottom)
+}

@@ -7,14 +7,8 @@
 			indicator-active-color="#fff"
 			autoplay
 			circular>
-				<swiper-item >
-					<image src="/common/images/banner1.jpg" mode=""></image>
-				</swiper-item>
-				<swiper-item >
-					<image src="/common/images/banner2.jpg" mode=""></image>
-				</swiper-item>
-				<swiper-item >
-					<image src="/common/images/banner3.jpg" mode=""></image>
+				<swiper-item v-for="item in bannerList" :key="item._id">
+					<image :src="item.picurl" mode=""></image>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -30,9 +24,8 @@
 				vertical
 				interval="1500"
 				duration="300">
-					<swiper-item>文字内容1111111111111111111111111111</swiper-item>
-					<swiper-item>文字内容2</swiper-item>
-					<swiper-item>文字内容3</swiper-item>
+					<swiper-item v-for="item in noticeList" :key="item._id">{{item.title}}</swiper-item>
+
 				</swiper>
 			</view>
 			<view class="right">
@@ -53,8 +46,8 @@
 			</common-title >
 			<view class="content">
 				<scroll-view scroll-x>
-					<view class="box" v-for="item in 8">
-						<image src="/common/images/preview_small.webp" mode="aspectFill" @click="goPreview"></image>
+					<view class="box" v-for="item in dayRandom" :key="item._id">
+						<image :src="item.smallPicurl" mode="aspectFill" @click="goPreview"></image>
 					</view>
 				</scroll-view>
 			</view>
@@ -68,13 +61,21 @@
 			</common-title>
 		</view>
 		<view class="content1">
-			<theme-item v-for="item in 8"></theme-item>
+			<theme-item v-for="item in classfiyList" 
+			:key="item._id"
+			 :item="item"></theme-item>
 			<theme-item :isMore="true"></theme-item>
+		</view>
+		<view class="safe-area-inset-bottom">
+			
 		</view>
 	</view>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import {apiGetBanner,apiDayRandom,apiGetNotice ,apiGetClassify} from "../../apis/apis"
+
 	const goPreview=()=>{
 		uni.navigateTo({
 			url:"/pages/preview/preview"
@@ -85,6 +86,34 @@
 			url:"/pages/notice/detail"
 		})
 	}
+	//获取轮播图
+	const bannerList = ref([])
+	const dayRandom = ref([])
+	const noticeList = ref([])
+	const classfiyList = ref([])
+	
+	const getbanner =async ()=>{
+	let res =await apiGetBanner();
+	bannerList.value = res.data.data;
+	}
+	getbanner();
+	//每日推荐
+	const getDayRandom =async ()=>{
+	const res =await apiDayRandom(); 
+	dayRandom.value = res.data.data
+	}
+	getDayRandom();
+	//公告
+	const getNotice =async () =>{
+		const res = await apiGetNotice({select:true});
+		noticeList.value = res.data.data
+	}
+	getNotice();
+	const getClassify = async() =>{
+		const res =await apiGetClassify({select:true});
+		classfiyList.value = res.data.data;
+	}
+	getClassify();
 </script>
  
 <style lang="scss" scoped>

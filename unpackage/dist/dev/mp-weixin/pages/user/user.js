@@ -12,9 +12,14 @@ if (!Math) {
 const _sfc_main = {
   __name: "user",
   setup(__props) {
+    const openClassfiy = () => {
+      common_vendor.index.switchTab({
+        url: "/pages/classify/classify"
+      });
+    };
     return (_ctx, _cache) => {
       return {
-        a: common_assets._imports_0$1,
+        a: common_assets._imports_0,
         b: common_vendor.p({
           type: "download-filled",
           size: "20",
@@ -25,28 +30,20 @@ const _sfc_main = {
           size: "15",
           color: "#aaa"
         }),
-        d: common_vendor.p({
+        d: common_vendor.o(openClassfiy),
+        e: common_vendor.p({
           type: "star-filled",
           size: "20",
           color: "#28b389"
         }),
-        e: common_vendor.p({
-          type: "right",
-          size: "15",
-          color: "#aaa"
-        }),
         f: common_vendor.p({
-          type: "chatboxes-filled",
-          size: "20",
-          color: "#28b389"
-        }),
-        g: common_vendor.p({
           type: "right",
           size: "15",
           color: "#aaa"
         }),
+        g: common_vendor.o(openClassfiy),
         h: common_vendor.p({
-          type: "notification-filled",
+          type: "chatboxes-filled",
           size: "20",
           color: "#28b389"
         }),
@@ -56,11 +53,21 @@ const _sfc_main = {
           color: "#aaa"
         }),
         j: common_vendor.p({
-          type: "flag-filled",
+          type: "notification-filled",
           size: "20",
           color: "#28b389"
         }),
         k: common_vendor.p({
+          type: "right",
+          size: "15",
+          color: "#aaa"
+        }),
+        l: common_vendor.p({
+          type: "flag-filled",
+          size: "20",
+          color: "#28b389"
+        }),
+        m: common_vendor.p({
           type: "right",
           size: "15",
           color: "#aaa"
