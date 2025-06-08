@@ -47,7 +47,7 @@
 			<view class="content">
 				<scroll-view scroll-x>
 					<view class="box" v-for="item in dayRandom" :key="item._id">
-						<image :src="item.smallPicurl" mode="aspectFill" @click="goPreview"></image>
+						<image :src="item.smallPicurl" mode="aspectFill" @click="goPreview(item._id)"></image>
 					</view>
 				</scroll-view>
 			</view>
@@ -56,7 +56,9 @@
 			<common-title>
 				<template #name>专题精选</template>
 				<template #custom>
-					<navigator url="" class="more">More+</navigator>
+					<view class="more" @click="goClass">
+						More+
+					</view>
 				</template>
 			</common-title>
 		</view>
@@ -74,11 +76,23 @@
 
 <script setup>
 import { ref } from 'vue';
+import {onShareAppMessage,onShareTimeline} from "@dcloudio/uni-app"
 import {apiGetBanner,apiDayRandom,apiGetNotice ,apiGetClassify} from "../../apis/apis"
-
-	const goPreview=()=>{
+//获取轮播图
+	const bannerList = ref([])
+	const dayRandom = ref([])
+	const noticeList = ref([])
+	const classfiyList = ref([])
+	
+	const goClass = ()=>{
+		uni.switchTab({
+			url:"/pages/classify/classify"
+		})
+	}
+	const goPreview=(id)=>{
+		uni.setStorageSync("storgClassList",dayRandom.value);
 		uni.navigateTo({
-			url:"/pages/preview/preview"
+			url:"/pages/preview/preview?id="+id
 		})
 	}
 	const goDetail=()=>{
@@ -86,11 +100,6 @@ import {apiGetBanner,apiDayRandom,apiGetNotice ,apiGetClassify} from "../../apis
 			url:"/pages/notice/detail"
 		})
 	}
-	//获取轮播图
-	const bannerList = ref([])
-	const dayRandom = ref([])
-	const noticeList = ref([])
-	const classfiyList = ref([])
 	
 	const getbanner =async ()=>{
 	let res =await apiGetBanner();
@@ -114,6 +123,20 @@ import {apiGetBanner,apiDayRandom,apiGetNotice ,apiGetClassify} from "../../apis
 		classfiyList.value = res.data.data;
 	}
 	getClassify();
+	
+//分享给好友
+onShareAppMessage((e)=>{
+	return{
+		title:"壁纸",
+		path:"/pages/classlist/classlist"
+	}
+})
+//分享到朋友圈
+onShareTimeline(()=>{
+	return{
+		title:"壁纸",
+	}
+})
 </script>
  
 <style lang="scss" scoped>

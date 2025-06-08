@@ -1,6 +1,6 @@
 <template>
 	<view class="preview">
-		<swiper circular :current="currentIndex" @change="swiperChange">
+		<swiper circular :current="currentIndex" v-if="currentInfo" @change="swiperChange">
 			<swiper-item v-for="(item,index) in classList" :key="item._id">
 				<image v-if="readImgs.includes(index)" :src="item.picurl" mode="aspectFill" @click="maskChange"></image>
 			</swiper-item>
@@ -18,7 +18,7 @@
 			<view class="date">
 				<uni-dateformat :date="new Date()" format="MM月dd日"></uni-dateformat>
 			</view>
-			<view class="footer">
+			<view class="footer" v-if="currentInfo">
 				<view class="box">
 					<uni-icons type="info" size="23"></uni-icons>
 					<view class="text" @click="clickInfo">
@@ -52,7 +52,7 @@
 					
 				</view>
 				<scroll-view scroll-y="true" >
-					<view class="content">
+					<view class="content" v-if="currentInfo">
 						<view class="row">
 							<view class="label">壁纸ID：</view>
 							<text selectable class="value">{{currentInfo._id}}</text>
@@ -80,7 +80,7 @@
 						<view class="row">
 							<view class="label">标签：</view>
 							<view class="value tabs">
-								<view class="tab" v-for="item in currentInfo.tabs">
+								<view class="tab" v-for="(item,index) in currentInfo.tabs" :key="index">
 									{{item}}
 								</view>
 							</view>
@@ -90,6 +90,9 @@
 							本代码及设计内容仅供学习，
 							未经许可不得用于商业用途。原创内容版权归原作者所有，转载请注明出处。
 							使用第三方资源（如图片、组件）请遵守其相关授权协议。
+						</view>
+						<view class="safe-area-inset-bottom">
+							
 						</view>
 					</view>
 				</scroll-view>
@@ -108,7 +111,7 @@
 				</view>
 				</view>
 			<view class="content">
-				<uni-rate v-model="userScore" allowHalf :disabled="userScore" disabled-color="#ffca3e"/>
+				<uni-rate v-model="userScore" allowHalf="true" :disabled="isDisabled" disabled-color="#ffca3e"/>
 				<text>{{userScore}}分</text>
 			</view>
 			<view class="footer">
@@ -123,7 +126,25 @@
 import { ref } from 'vue';
 import {onLoad} from '@dcloudio/uni-app'
 import {getstatusBarHeight} from "@/utils/system.js"
-import {apiGetSetupScore,apiWriteDownload} from "@/apis/apis.js"
+import {apiGetSetupScore,apiWriteDownload,apiGetClassList } from "@/apis/apis.js"
+import { onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
+
+// 分享给好友
+onShareAppMessage(() => {
+	return {
+		title: currentInfo.value ? `壁纸 by ${currentInfo.value.nickname}` : '壁纸预览',
+		path: '/pages/preview/preview?id=' + currentId.value
+	}
+})
+//分享到朋友圈
+onShareTimeline(() => {
+    return {
+        title: currentInfo.value ? `壁纸 by ${currentInfo.value.nickname}` : '壁纸预览',
+        query: 'id=' + currentId.value + '&classid=' + currentInfo.value.classid
+    }
+})
+
+
 //定义图片信息
 const currentInfo = ref(null);
 //下载图片到本地
@@ -222,6 +243,7 @@ const clickDownload = async () => {
 
 
 const userScore =ref(0)
+const isDisabled = ref(false) // 可以控制何时禁用
 //遮罩层显示
 	const maskState =ref(true);
 	const maskChange =()=>{
@@ -276,8 +298,17 @@ const submitScore =async ()=>{
 }
 
 //返回上一页
-const goback=()=>{
-	uni.navigateBack()
+const goback = () => {
+  const pages = getCurrentPages();
+  
+  if (pages.length > 1) {
+    uni.navigateBack();
+  } else {
+    // 如果页面栈中只有一个页面，则重定向到首页
+    uni.reLaunch({
+      url: '/pages/index/index' // 请替换为您的实际首页路径
+    });
+  }
 }
 
 //读取缓存里内容
@@ -294,16 +325,52 @@ const currentId = ref(null);
 const currentIndex = ref(0)
 //滑动再加载
 const readImgs = ref([])
-onLoad((e)=>{
-  currentId.value = e.id;
-  currentIndex.value = classList.value.findIndex(item=>item._id == currentId.value)
-  readImgs.value.push(
-  currentIndex.value-1<=0 ? classList.value.length-1 : currentIndex.value-1,
-  currentIndex.value,
-  currentIndex.value+1>=classList.value.length-1 ? 0:currentIndex.value+1)
-  currentInfo.value = classList.value[currentIndex.value]
-  console.log(currentInfo);
-})
+onLoad(async (e) => {
+    currentId.value = e.id;
+
+    // 先取缓存
+    let storgClassList = uni.getStorageSync("storgClassList") || [];
+
+    // 如果缓存是空的，主动请求一次
+    if (storgClassList.length === 0) {
+        console.log('缓存为空，主动请求 classList');
+        let res = await apiGetClassList({
+            classid: e.classid || '', // 看你接口是否需要 classid，可以不传
+            pageNum: 1,
+            pageSize: 50
+        });
+
+        storgClassList = res.data.data || [];
+        uni.setStorageSync("storgClassList", storgClassList);
+    }
+
+    // 重新赋值 classList
+    classList.value = storgClassList.map(item => {
+        return {
+            ...item,
+            picurl: item.smallPicurl.replace("_small.webp", ".jpg")
+        }
+    });
+
+    // 设置 currentIndex
+    currentIndex.value = classList.value.findIndex(item => item._id == currentId.value);
+
+    // 兼容 id 找不到的情况
+    if (currentIndex.value === -1 && classList.value.length > 0) {
+        currentIndex.value = 0;
+    }
+
+    // 设置 readImgs
+    readImgs.value.push(
+        currentIndex.value - 1 <= 0 ? classList.value.length - 1 : currentIndex.value - 1,
+        currentIndex.value,
+        currentIndex.value + 1 >= classList.value.length - 1 ? 0 : currentIndex.value + 1
+    );
+
+    // 设置 currentInfo
+    currentInfo.value = classList.value[currentIndex.value];
+    console.log('currentInfo:', currentInfo.value);
+});
 const swiperChange = (e) =>{
 	currentIndex.value = e.detail.current;
 	readImgs.value.push(currentIndex.value-1,currentIndex.value,currentIndex.value+1)

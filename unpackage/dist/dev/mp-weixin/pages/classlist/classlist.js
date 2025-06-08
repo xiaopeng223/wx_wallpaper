@@ -14,6 +14,7 @@ const _sfc_main = {
   setup(__props) {
     const classList = common_vendor.ref([]);
     const noData = common_vendor.ref(false);
+    let pageName;
     const queryParams = {
       pageNum: 1,
       pageSize: 12
@@ -21,6 +22,7 @@ const _sfc_main = {
     common_vendor.onLoad((e) => {
       let { id = null, name = null } = e;
       queryParams.classid = id;
+      pageName = name;
       common_vendor.index.setNavigationBarTitle({
         title: name
       });
@@ -39,6 +41,18 @@ const _sfc_main = {
         return;
       queryParams.pageNum++;
       getClassList();
+    });
+    common_vendor.onShareAppMessage((e) => {
+      return {
+        title: "壁纸",
+        path: "/pages/classlist/classlist?id=" + queryParams.classid + "&name=" + pageName
+      };
+    });
+    common_vendor.onShareTimeline(() => {
+      return {
+        title: "壁纸",
+        query: "id=" + queryParams.classid + "&name=" + pageName
+      };
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
@@ -65,5 +79,6 @@ const _sfc_main = {
   }
 };
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-bd381383"]]);
+_sfc_main.__runtimeHooks = 6;
 wx.createPage(MiniProgramPage);
 //# sourceMappingURL=../../../.sourcemap/mp-weixin/pages/classlist/classlist.js.map

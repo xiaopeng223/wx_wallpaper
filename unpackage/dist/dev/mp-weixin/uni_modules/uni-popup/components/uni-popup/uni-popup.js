@@ -281,7 +281,7 @@ const _sfc_main = {
         left: 0,
         right: 0,
         bottom: 0,
-        paddingBottom: this.safeAreaInsets + "px",
+        // paddingBottom: this.safeAreaInsets + 'px',
         backgroundColor: this.bg,
         borderRadius: this.borderRadius || "0"
       };

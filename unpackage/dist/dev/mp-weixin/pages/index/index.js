@@ -20,9 +20,19 @@ if (!Math) {
 const _sfc_main = {
   __name: "index",
   setup(__props) {
-    const goPreview = () => {
+    const bannerList = common_vendor.ref([]);
+    const dayRandom = common_vendor.ref([]);
+    const noticeList = common_vendor.ref([]);
+    const classfiyList = common_vendor.ref([]);
+    const goClass = () => {
+      common_vendor.index.switchTab({
+        url: "/pages/classify/classify"
+      });
+    };
+    const goPreview = (id) => {
+      common_vendor.index.setStorageSync("storgClassList", dayRandom.value);
       common_vendor.index.navigateTo({
-        url: "/pages/preview/preview"
+        url: "/pages/preview/preview?id=" + id
       });
     };
     const goDetail = () => {
@@ -30,10 +40,6 @@ const _sfc_main = {
         url: "/pages/notice/detail"
       });
     };
-    const bannerList = common_vendor.ref([]);
-    const dayRandom = common_vendor.ref([]);
-    const noticeList = common_vendor.ref([]);
-    const classfiyList = common_vendor.ref([]);
     const getbanner = async () => {
       let res = await apis_apis.apiGetBanner();
       bannerList.value = res.data.data;
@@ -54,6 +60,17 @@ const _sfc_main = {
       classfiyList.value = res.data.data;
     };
     getClassify();
+    common_vendor.onShareAppMessage((e) => {
+      return {
+        title: "壁纸",
+        path: "/pages/classlist/classlist"
+      };
+    });
+    common_vendor.onShareTimeline(() => {
+      return {
+        title: "壁纸"
+      };
+    });
     return (_ctx, _cache) => {
       return {
         a: common_vendor.p({
@@ -94,11 +111,12 @@ const _sfc_main = {
         i: common_vendor.f(dayRandom.value, (item, k0, i0) => {
           return {
             a: item.smallPicurl,
-            b: common_vendor.o(goPreview, item._id),
+            b: common_vendor.o(($event) => goPreview(item._id), item._id),
             c: item._id
           };
         }),
-        j: common_vendor.f(classfiyList.value, (item, k0, i0) => {
+        j: common_vendor.o(goClass),
+        k: common_vendor.f(classfiyList.value, (item, k0, i0) => {
           return {
             a: item._id,
             b: "1cf27b2a-7-" + i0,
@@ -107,7 +125,7 @@ const _sfc_main = {
             })
           };
         }),
-        k: common_vendor.p({
+        l: common_vendor.p({
           isMore: true
         })
       };
@@ -115,5 +133,6 @@ const _sfc_main = {
   }
 };
 const MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["__scopeId", "data-v-1cf27b2a"]]);
+_sfc_main.__runtimeHooks = 6;
 wx.createPage(MiniProgramPage);
 //# sourceMappingURL=../../../.sourcemap/mp-weixin/pages/index/index.js.map

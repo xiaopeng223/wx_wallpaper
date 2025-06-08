@@ -17,10 +17,11 @@
 
 <script setup>
 import { ref } from 'vue';
-import {onLoad, onReachBottom} from "@dcloudio/uni-app"
+import {onLoad, onReachBottom,onShareAppMessage,onShareTimeline} from "@dcloudio/uni-app"
 import {apiGetClassList} from "@/apis/apis.js"
 const classList = ref([])
 const noData = ref(false)
+let pageName;
 //获取url传递的id
 const queryParams = {
 	pageNum:1,
@@ -29,6 +30,7 @@ const queryParams = {
 onLoad((e)=>{
 	let {id=null,name=null} = e;
 	queryParams.classid = id;
+	pageName = name
 	uni.setNavigationBarTitle({
 		title:name
 	})
@@ -49,6 +51,22 @@ onReachBottom(()=>{
 	if(noData.value) return;
 	queryParams.pageNum++
 	getClassList();
+})
+
+
+//分享给好友
+onShareAppMessage((e)=>{
+	return{
+		title:"壁纸",
+		path:"/pages/classlist/classlist?id="+queryParams.classid+"&name="+pageName
+	}
+})
+//分享到朋友圈
+onShareTimeline(()=>{
+	return{
+		title:"壁纸",
+		query:"id="+queryParams.classid+"&name="+pageName
+	}
 })
 </script>
 
