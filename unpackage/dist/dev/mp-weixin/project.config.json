@@ -15,11 +15,12 @@
             "ignore": [],
             "disablePlugins": [],
             "outputPath": ""
-        }
+        },
+        "ignoreUploadUnusedFiles": false
     },
     "compileType": "miniprogram",
     "libVersion": "3.8.6",
-    "appid": "touristappid",
+    "appid": "wx4c330121a919a3a9",
     "projectname": "WallPaper",
     "condition": {},
     "editorSetting": {
