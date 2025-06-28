@@ -1,16 +1,16 @@
 <template>
 	<view class="themeItem">
-		<navigator url="" class="box" v-if="!isMore">
-			<image src="/common/images/classify1.jpg" mode="aspectFill" class="pic"></image>
+		<navigator :url="'/pages/classlist/classlist?id=' + item._id +'&name=' +item.name" class="box" v-if="!isMore">
+			<image :src="item.picurl" mode="aspectFill" class="pic"></image>
 			<view class="mask">
-				明星美女
+				{{item.name}}
 			</view>
 			<view class="tab">
-				3天前更新
+				{{formatTimeDiff(item.updateTime)}}更新
 			</view>
 		</navigator>
 		
-		<navigator url="" class="box more" v-if="isMore">
+		<navigator url="/pages/classify/classify" open-type="reLaunch" class="box more" v-if="isMore">
 			<image src="/common/images/more.jpg" mode="aspectFill" class="pic"></image>
 			<view class="mask">
 				<uni-icons type="more" size="34" color="#fff"></uni-icons>
@@ -26,10 +26,21 @@
 </template>
 
 <script setup>
+	import {formatTimeDiff} from "@/utils/common.js"
 defineProps({
 	isMore:{
 		type:Boolean,
 		default:false
+	},
+	item:{
+		type:Object,
+		default(){
+			return {
+				name:"默认名称",
+				picurl:"../../common/images/classify1.jpg",
+				updateTime:Date.now() -1000*60*60*5
+			}
+		}
 	}
 })
 </script>

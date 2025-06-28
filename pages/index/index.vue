@@ -1,43 +1,42 @@
 <template>
-	<view class="homeLayout">
+	<view class="homeLayout pageBg">
+		<custom-nav-bar title="推荐"></custom-nav-bar>
 		<view class="banner">
 			<swiper indicator-dots 
 			indicator-color="rgba(255,255,255,0.5)" 
 			indicator-active-color="#fff"
 			autoplay
 			circular>
-				<swiper-item >
-					<image src="/common/images/banner1.jpg" mode=""></image>
-				</swiper-item>
-				<swiper-item >
-					<image src="/common/images/banner2.jpg" mode=""></image>
-				</swiper-item>
-				<swiper-item >
-					<image src="/common/images/banner3.jpg" mode=""></image>
+				<swiper-item v-for="item in bannerList" :key="item._id">
+					<image :src="item.picurl" mode=""></image>
 				</swiper-item>
 			</swiper>
 		</view>
-		<view class="notice">
-			<view class="left">
-				<uni-icons type="sound-filled" size="20" color="#28b389" ></uni-icons>
-				<text class="text">公告</text>
-			</view>
-			<view class="center">
-				<swiper  
-				autoplay
-				circular
-				vertical
-				interval="1500"
-				duration="300">
-					<swiper-item>文字内容1111111111111111111111111111</swiper-item>
-					<swiper-item>文字内容2</swiper-item>
-					<swiper-item>文字内容3</swiper-item>
-				</swiper>
-			</view>
-			<view class="right">
-				<uni-icons type="right" size="16" color="#333" ></uni-icons>
-			</view>
-		</view>
+<view class="notice">
+	<view class="left">
+		<uni-icons type="sound-filled" size="20" color="$brand-theme-color"></uni-icons>
+		<text class="text">公告</text>
+	</view>
+	<view class="center">
+		<swiper  
+			autoplay
+			circular
+			vertical
+			interval="1500"
+			duration="300">
+			<swiper-item 
+				v-for="item in noticeList" 
+				:key="item._id"
+				@click="goDetail(item._id)">
+				{{ item.title }}
+			</swiper-item>
+		</swiper>
+	</view>
+	<view class="right">
+		<uni-icons type="right" size="16" color="#333"></uni-icons>
+	</view>
+</view>
+
 		<view class="select">
 			<common-title>
 				<template #name>每日推荐</template>
@@ -52,8 +51,8 @@
 			</common-title >
 			<view class="content">
 				<scroll-view scroll-x>
-					<view class="box" v-for="item in 8">
-						<image src="/common/images/preview_small.webp" mode="aspectFill"></image>
+					<view class="box" v-for="item in dayRandom" :key="item._id">
+						<image :src="item.smallPicurl" mode="aspectFill" @click="goPreview(item._id)"></image>
 					</view>
 				</scroll-view>
 			</view>
@@ -62,20 +61,89 @@
 			<common-title>
 				<template #name>专题精选</template>
 				<template #custom>
-					<navigator url="" class="more">More+</navigator>
+					<view class="more" @click="goClass">
+						More+
+					</view>
 				</template>
 			</common-title>
 		</view>
 		<view class="content1">
-			<theme-item v-for="item in 8"></theme-item>
+			<theme-item v-for="item in classfiyList" 
+			:key="item._id"
+			 :item="item"></theme-item>
 			<theme-item :isMore="true"></theme-item>
+		</view>
+		<view class="safe-area-inset-bottom">
+			
 		</view>
 	</view>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import {onShareAppMessage,onShareTimeline} from "@dcloudio/uni-app"
+import {apiGetBanner,apiDayRandom,apiGetNotice ,apiGetClassify} from "../../apis/apis"
+//获取轮播图
+	const bannerList = ref([])
+	const dayRandom = ref([])
+	const noticeList = ref([])
+	const classfiyList = ref([])
+	
+	const goClass = ()=>{
+		uni.switchTab({
+			url:"/pages/classify/classify"
+		})
+	}
+	const goPreview=(id)=>{
+		uni.setStorageSync("storgClassList",dayRandom.value);
+		uni.navigateTo({
+			url:"/pages/preview/preview?id="+id
+		})
+	}
+	const goDetail=(id)=>{
+		uni.navigateTo({
+			url:"/pages/notice/detail?id="+id
+		})
+	}
+	
+	const getbanner =async ()=>{
+	let res =await apiGetBanner();
+	bannerList.value = res.data.data;
+	}
+	getbanner();
+	//每日推荐
+	const getDayRandom =async ()=>{
+	const res =await apiDayRandom(); 
+	dayRandom.value = res.data.data
+	}
+	getDayRandom();
+	//公告
+	const getNotice =async () =>{
+		const res = await apiGetNotice({select:true});
+		noticeList.value = res.data.data
+	}
+	getNotice();
+	const getClassify = async() =>{
+		const res =await apiGetClassify({select:true});
+		classfiyList.value = res.data.data;
+	}
+	getClassify();
+	
+//分享给好友
+onShareAppMessage((e)=>{
+	return{
+		title:"壁纸",
+		path:"/pages/classlist/classlist"
+	}
+})
+//分享到朋友圈
+onShareTimeline(()=>{
+	return{
+		title:"壁纸",
+	}
+})
 </script>
-
+ 
 <style lang="scss" scoped>
 	.homeLayout{
 		.banner{
@@ -110,7 +178,7 @@
 				align-items: center;
 				justify-content: center;
 				.text{
-					color: #28b389;
+					color: $brand-theme-color;
 					font-weight: 600;
 					font-size: 28rpx;
 				}
@@ -136,7 +204,7 @@
 		.select{
 			padding-top: 50rpx;	
 			.date{
-				color: #28b389;
+				color: $brand-theme-color;
 				display: flex;
 				align-items: center;
 				.text{
