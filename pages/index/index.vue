@@ -12,26 +12,31 @@
 				</swiper-item>
 			</swiper>
 		</view>
-		<view class="notice" @click="goDetail">
-			<view class="left">
-				<uni-icons type="sound-filled" size="20" color="$brand-theme-color" ></uni-icons>
-				<text class="text" >公告</text>
-			</view>
-			<view class="center">
-				<swiper  
-				autoplay
-				circular
-				vertical
-				interval="1500"
-				duration="300">
-					<swiper-item v-for="item in noticeList" :key="item._id">{{item.title}}</swiper-item>
+<view class="notice">
+	<view class="left">
+		<uni-icons type="sound-filled" size="20" color="$brand-theme-color"></uni-icons>
+		<text class="text">公告</text>
+	</view>
+	<view class="center">
+		<swiper  
+			autoplay
+			circular
+			vertical
+			interval="1500"
+			duration="300">
+			<swiper-item 
+				v-for="item in noticeList" 
+				:key="item._id"
+				@click="goDetail(item._id)">
+				{{ item.title }}
+			</swiper-item>
+		</swiper>
+	</view>
+	<view class="right">
+		<uni-icons type="right" size="16" color="#333"></uni-icons>
+	</view>
+</view>
 
-				</swiper>
-			</view>
-			<view class="right">
-				<uni-icons type="right" size="16" color="#333" ></uni-icons>
-			</view>
-		</view>
 		<view class="select">
 			<common-title>
 				<template #name>每日推荐</template>
@@ -95,9 +100,9 @@ import {apiGetBanner,apiDayRandom,apiGetNotice ,apiGetClassify} from "../../apis
 			url:"/pages/preview/preview?id="+id
 		})
 	}
-	const goDetail=()=>{
+	const goDetail=(id)=>{
 		uni.navigateTo({
-			url:"/pages/notice/detail"
+			url:"/pages/notice/detail?id="+id
 		})
 	}
 	

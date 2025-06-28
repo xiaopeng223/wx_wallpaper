@@ -1,31 +1,42 @@
 <template>
-	<view class="noticeLayout">
+	<view class="noticeLayout" v-if="details">
 		<view class="title">
-			<view class="tag">
+			<view class="tag" v-if="details.select">
 				<uni-tag inverted text="置顶" type="error" />
 			</view>
-			<view class="font">这个区域填写标题</view>			
+			<view class="font">{{details.title}}</view>			
 		</view>
 		
 		<view class="info">
-			<view class="item">咸虾米</view>					
+			<view class="item">{{details.author}}</view>					
 			<view class="item">
 				<uni-dateformat :date="Date.now()" format="yyyy-MM-dd hh:mm:ss"></uni-dateformat>
 			</view>	
 		</view>
-		
-		
-		<view class="content">		
-			内容区域					
+		<view class="content" v-html="details.content">
 		</view>
-		
 		<view class="count">
-			阅读 5588	
+			阅读 {{details.view_count}}
 		</view>
 	</view>
 </template>
 
 <script setup>
+import { ref } from "vue";
+import {apiGetNoticeDetail} from "../../apis/apis"
+import { onLoad } from "@dcloudio/uni-app"
+const details = ref()
+let noticeId
+onLoad((e)=>{
+	noticeId =e.id;
+	getNoticeDetail();
+})
+const getNoticeDetail =()=>{
+	apiGetNoticeDetail({id:noticeId}).then(res=>{
+		// console.log( res.data.data);
+		details.value = res.data.data
+	})
+}
 
 </script>
 

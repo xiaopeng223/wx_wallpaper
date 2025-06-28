@@ -1,19 +1,21 @@
 <template>
-	<view class="userLayout pageBg">
-	<view class="userInfo">
+	<view class="userLayout pageBg" v-if="userinfo">
+		<view :style="{height:getNavBarHeight()+'px'}">
+		</view>
+	<view class="userInfo" >
 		<view class="avatar">
 			<image src="/static/images/xxmLogo.png" mode="aspectFill"></image>
 		</view>
 		<view class="nickname">
-			默认用户
+			默认用户:{{userinfo.IP}}
 		</view>
 		<view class="address">
-			来自: 成都
+			来自于：{{userinfo.address.province}}-{{userinfo.address.city}}
 		</view>
 	</view>
 	<view class="section">
 		<view class="list">
-			
+			<navigator url="/pages/classlist/classlist?name=我的下载&type=download">
 			<view class="row" @click="openClassfiy">	
 				<view class="left">
 					<uni-icons type="download-filled" size="20" color="#28b389"></uni-icons>
@@ -23,12 +25,13 @@
 				</view>
 				<view class="right">
 					<view class="text">
-						33
+						{{userinfo.downloadSize}}
 					</view>
 					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 				</view>
 			</view>	
-		
+		</navigator>
+		<navigator url="/pages/classlist/classlist?name=我的评分&type=score">
 				<view class="row" @click="openClassfiy">
 					<view class="left">
 						<uni-icons type="star-filled" size="20" color="#28b389"></uni-icons>
@@ -38,12 +41,12 @@
 					</view>
 					<view class="right">
 						<view class="text">
-							33
+							{{userinfo.scoreSize}}
 						</view>
 						<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 					</view>
 				</view>
-			
+			</navigator>
 			<view class="row" >
 				<view class="left">
 					<uni-icons type="chatboxes-filled" size="20" color="#28b389"></uni-icons>
@@ -65,6 +68,7 @@
 	</view>
 	<view class="section">
 		<view class="list">
+			<navigator url="/pages/notice/detail?id=65361e318b0da4ca084e3ce0">
 			<view class="row" >
 				<view class="left">
 					<uni-icons type="notification-filled" size="20" color="#28b389"></uni-icons>
@@ -76,6 +80,8 @@
 					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 				</view>
 			</view>
+			</navigator>
+			<navigator url="/pages/notice/detail?id=6536358ce0ec19c8d67fbe82">
 			<view class="row" >
 				<view class="left">
 					<uni-icons type="flag-filled" size="20" color="#28b389"></uni-icons>
@@ -87,24 +93,42 @@
 					<uni-icons type="right" size="15" color="#aaa"></uni-icons>
 				</view>
 			</view>
+			</navigator>
 		</view>
 	</view>
 	<view class="safe-area-inset-bottom">
 		
 	</view>
 	</view>
+	<view class="loadingLayout" v-else>
+		<view :style="{height:getNavBarHeight()+'px'}">
+		</view>
+		<uni-load-more status="loading"></uni-load-more>
+	</view>
 </template>
 
 <script setup>
+	import {getNavBarHeight} from "@/utils/system.js"
+	import { apiUserInfo } from "../../apis/apis";
+import { ref } from "vue";
+	const userinfo = ref("");
+	//用户信息
+	const getUserInfo =()=>{
+		apiUserInfo().then(res =>{
+			console.log(res.data.data);
+			userinfo.value = res.data.data;
+		})
+	}
+	getUserInfo();
 	const phoneContact=()=>{
 		uni.makePhoneCall({
 			phoneNumber: '114' 
 		});
 	}
 	const openClassfiy =() =>{
-		uni.switchTab({
-			url:"/pages/classify/classify"
-		})
+		// uni.switchTab({
+		// 	url:"/pages/classify/classify"
+		// })
 	}
 </script>
 

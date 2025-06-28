@@ -36,11 +36,39 @@ function apiWriteDownload(data = {}) {
     data
   });
 }
+function apiUserInfo(data = {}) {
+  return utils_request.request({
+    url: "/userInfo",
+    data
+  });
+}
+function apiGetHistoryList(data = {}) {
+  return utils_request.request({
+    url: "/userWallList",
+    data
+  });
+}
+function apiGetNoticeDetail(data = {}) {
+  return utils_request.request({
+    url: "/wallNewsDetail",
+    data
+  });
+}
+function apiSearchData(data = {}) {
+  return utils_request.request({
+    url: "/searchWall",
+    data
+  });
+}
 exports.apiDayRandom = apiDayRandom;
 exports.apiGetBanner = apiGetBanner;
 exports.apiGetClassList = apiGetClassList;
 exports.apiGetClassify = apiGetClassify;
+exports.apiGetHistoryList = apiGetHistoryList;
 exports.apiGetNotice = apiGetNotice;
+exports.apiGetNoticeDetail = apiGetNoticeDetail;
 exports.apiGetSetupScore = apiGetSetupScore;
+exports.apiSearchData = apiSearchData;
+exports.apiUserInfo = apiUserInfo;
 exports.apiWriteDownload = apiWriteDownload;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/apis/apis.js.map

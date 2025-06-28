@@ -20,8 +20,11 @@ const _sfc_main = {
       pageSize: 12
     };
     common_vendor.onLoad((e) => {
-      let { id = null, name = null } = e;
-      queryParams.classid = id;
+      let { id = null, name = null, type = null } = e;
+      if (type)
+        queryParams.type = type;
+      if (id)
+        queryParams.classid = id;
       pageName = name;
       common_vendor.index.setNavigationBarTitle({
         title: name
@@ -29,12 +32,30 @@ const _sfc_main = {
       getClassList();
     });
     const getClassList = async () => {
-      const res = await apis_apis.apiGetClassList(queryParams);
-      classList.value = [...classList.value, ...res.data.data];
-      if (queryParams.pageSize > res.data.data.length) {
+      try {
+        let res;
+        if (queryParams.classid) {
+          res = await apis_apis.apiGetClassList(queryParams);
+        } else if (queryParams.type) {
+          res = await apis_apis.apiGetHistoryList(queryParams);
+        } else {
+          common_vendor.index.__f__("warn", "at pages/classlist/classlist.vue:52", "classid 和 type 都不存在，无法加载数据");
+          return;
+        }
+        if (res && res.data && Array.isArray(res.data.data)) {
+          classList.value = [...classList.value, ...res.data.data];
+          if (queryParams.pageSize > res.data.data.length) {
+            noData.value = true;
+          }
+          common_vendor.index.setStorageSync("storgClassList", classList.value);
+        } else {
+          common_vendor.index.__f__("error", "at pages/classlist/classlist.vue:65", "接口返回结构不符合预期：", res);
+          noData.value = true;
+        }
+      } catch (err) {
+        common_vendor.index.__f__("error", "at pages/classlist/classlist.vue:69", "getClassList 请求失败：", err);
         noData.value = true;
       }
-      common_vendor.index.setStorageSync("storgClassList", classList.value);
     };
     common_vendor.onReachBottom(() => {
       if (noData.value)

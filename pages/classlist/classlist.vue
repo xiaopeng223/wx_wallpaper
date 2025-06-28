@@ -18,7 +18,7 @@
 <script setup>
 import { ref } from 'vue';
 import {onLoad, onReachBottom,onShareAppMessage,onShareTimeline} from "@dcloudio/uni-app"
-import {apiGetClassList} from "@/apis/apis.js"
+import {apiGetClassList,apiGetHistoryList} from "@/apis/apis.js"
 const classList = ref([])
 const noData = ref(false)
 let pageName;
@@ -28,8 +28,9 @@ const queryParams = {
 	pageSize:12
 }
 onLoad((e)=>{
-	let {id=null,name=null} = e;
-	queryParams.classid = id;
+	let {id=null,name=null,type=null} = e;
+	if(type) queryParams.type = type;
+	if(id) queryParams.classid = id;
 	pageName = name
 	uni.setNavigationBarTitle({
 		title:name
@@ -38,14 +39,38 @@ onLoad((e)=>{
 	getClassList();
 })
 //获取分类列表
-const getClassList =async ()=>{
-	const res =await apiGetClassList(queryParams);
-	classList.value =[...classList.value , ...res.data.data];
-	if(queryParams.pageSize>res.data.data.length){
-		noData.value = true
+const getClassList = async () => {
+	try {
+		let res;
+
+		// 根据业务逻辑优先级判断到底调用哪个接口
+		if (queryParams.classid) {
+			res = await apiGetClassList(queryParams);
+		} else if (queryParams.type) {
+			res = await apiGetHistoryList(queryParams);
+		} else {
+			console.warn("classid 和 type 都不存在，无法加载数据");
+			return;
+		}
+
+		// 判断返回结构是否符合预期
+		if (res && res.data && Array.isArray(res.data.data)) {
+			classList.value = [...classList.value, ...res.data.data];
+
+			if (queryParams.pageSize > res.data.data.length) {
+				noData.value = true;
+			}
+			uni.setStorageSync("storgClassList", classList.value);
+		} else {
+			console.error("接口返回结构不符合预期：", res);
+			noData.value = true;
+		}
+	} catch (err) {
+		console.error("getClassList 请求失败：", err);
+		noData.value = true;
 	}
-	uni.setStorageSync("storgClassList",classList.value);
-}
+};
+
 //触底加载更多
 onReachBottom(()=>{
 	if(noData.value) return;

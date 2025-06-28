@@ -7282,9 +7282,9 @@ function isConsoleWritable() {
   return isWritable;
 }
 function initRuntimeSocketService() {
-  const hosts = "192.168.0.196,127.0.0.1";
+  const hosts = "192.168.10.13,192.168.239.1,192.168.204.1,127.0.0.1";
   const port = "8090";
-  const id = "mp-weixin_w-sTfu";
+  const id = "mp-weixin_lWX9xX";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -8234,6 +8234,7 @@ const createHook = (lifecycle) => (hook, target = getCurrentInstance()) => {
   !isInSSRComponentSetup && injectHook(lifecycle, hook, target);
 };
 const onLoad = /* @__PURE__ */ createHook(ON_LOAD);
+const onUnload = /* @__PURE__ */ createHook(ON_UNLOAD);
 const onReachBottom = /* @__PURE__ */ createHook(ON_REACH_BOTTOM);
 const onShareTimeline = /* @__PURE__ */ createHook(ON_SHARE_TIMELINE);
 const onShareAppMessage = /* @__PURE__ */ createHook(ON_SHARE_APP_MESSAGE);
@@ -8249,6 +8250,7 @@ exports.onLoad = onLoad;
 exports.onReachBottom = onReachBottom;
 exports.onShareAppMessage = onShareAppMessage;
 exports.onShareTimeline = onShareTimeline;
+exports.onUnload = onUnload;
 exports.p = p;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;
